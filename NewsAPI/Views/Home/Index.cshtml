@@ -44,7 +44,6 @@
     var current_page = 1;
 
     function loadArticles() {
-        var pagination_container = document.getElementById("pagination");
         var queryText = document.getElementById("input-text").value;
 
         //Show loader
@@ -69,52 +68,60 @@
 
                 console.log(data)
 
-                //Clear previous input
-                news_container.innerHTML = "";
+                if (data.status != "error") {
+
+                    //Clear previous input
+                    news_container.innerHTML = "";
 
 
-                //if no results found
-                if (data.articles.length == 0) {
-                    news_container.innerHTML = "<span class='text-danger'>No News found for '" + queryText + "'</span>";
+                    //if no results found
+                    if (data.articles.length == 0) {
+                        news_container.innerHTML = "<span class='text-danger'>No News found for '" + queryText + "'</span>";
+                    }
+                    else {
+                        news_container.innerHTML = '<div class="text-success mt-3 mb-3">Latest ' + data.articles.length + ' Results </div>';
+                    }
+
+                    for (var i = 0; i < data.articles.length; i++) {
+
+                        var date = new Date(data.articles[i].publishedAt);
+
+                        news_container.innerHTML = news_container.innerHTML +
+
+                            '<div class="news mt-3 mb-3">' +
+                            '<div onclick="goToSite(' + "'" + data.articles[i].url + "'" + ')" target="_blank" class="news-url">' +
+                            '<div class="row">' +
+                            '<div class="col-3">' +
+                            '<img src="' + data.articles[i].urlToImage + '">' +
+                            '</div>' +
+
+                            '<div class="col-9">' +
+                            '<div class="news-title">' +
+                            '<h2>' + data.articles[i].title + '</h2>' +
+                            '</div>' +
+
+                            '<div class="news-description">' +
+                            data.articles[i].description +
+                            '</div>' +
+
+                            '<div class="news-date mt-3">' +
+                            'Published At: ' + date +
+                            '</div>' +
+
+                            '</div>' +
+
+                            '</div>' +
+                            '</div>' +
+
+                            '</div>';
+
+                    }
                 }
                 else {
-                    news_container.innerHTML = '<div class="text-success mt-3 mb-3">Latest ' + data.articles.length + ' Results </div>';
+                    //Show error messages
+                    news_container.innerHTML = data.message;
                 }
 
-                for (var i = 0; i < data.articles.length; i++) {
-
-                    var date = new Date(data.articles[i].publishedAt);
-
-                    news_container.innerHTML = news_container.innerHTML +
-
-                        '<div class="news mt-3 mb-3">' +
-                        '<div onclick="goToSite(' + "'" + data.articles[i].url + "'" + ')" target="_blank" class="news-url">' +
-                        '<div class="row">' +
-                        '<div class="col-3">' +
-                        '<img src="' + data.articles[i].urlToImage + '">' +
-                        '</div>' +
-
-                        '<div class="col-9">' +
-                        '<div class="news-title">' +
-                        '<h2>' + data.articles[i].title + '</h2>' +
-                        '</div>' +
-
-                        '<div class="news-description">' +
-                        data.articles[i].description +
-                        '</div>' +
-
-                        '<div class="news-date mt-3">' +
-                        'Published At: ' + date +
-                        '</div>' +
-
-                        '</div>' +
-
-                        '</div>' +
-                        '</div>' +
-
-                        '</div>';
-
-                }
 
                
             },

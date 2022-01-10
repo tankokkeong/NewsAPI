@@ -30,11 +30,11 @@ namespace NewsAPI.Controllers
 
             if(query == null || query == "")
             {
-                url = "https://newsapi.org/v2/everything?q=Apple&from=" + currentDate + "&page=" + page + "&language=en&pageSize=20&apiKey=YOUR_API_KEY";
+                url = "https://newsapi.org/v2/everything?q=Apple&from=" + currentDate + "&page=" + page + "&language=en&pageSize=20&apiKey=Your_API_KEY";
             }
             else
             {
-               url = "https://newsapi.org/v2/everything?q=" + query + "&from=" + currentDate + "&page=" + page + "&language=en&pageSize=20&apiKey=YOUR_API_KEY";
+               url = "https://newsapi.org/v2/everything?q=" + query + "&from=" + currentDate + "&page=" + page + "&language=en&pageSize=20&apiKey=Your_API_KEY";
             }
 
             var response = await client.GetAsync(url);
