@@ -1,0 +1,133 @@
+﻿@{
+    ViewBag.Title = "News API";
+}
+
+<div class="app-title mt-3 mb-3 text-center">
+    <h1>
+        News API
+    </h1>
+</div>
+
+<div class="news-container" id="news-container">
+
+    <div class="mt-3 mb-3">
+        <div class="search-row">
+
+            <div class="search-col-input mr-2">
+                <input type="text" class="form-control" placeholder="News Keywords..." id="input-text" />
+            </div>
+
+            <div class="search-col-btn">
+                <button class="btn btn-primary" onclick="loadArticles()">Search</button>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="news mt-3 mb-3" id="news">
+
+    </div>
+
+
+    <div class="pagination-container mt-3">
+        <nav aria-label="...">
+            <ul class="pagination" id="pagination">
+                
+            </ul>
+        </nav>
+    </div>
+</div>
+
+<script>
+
+    var news_container = document.getElementById("news");
+    var current_page = 1;
+
+    function loadArticles() {
+        var pagination_container = document.getElementById("pagination");
+        var queryText = document.getElementById("input-text").value;
+
+        //Show loader
+        news_container.innerHTML = "<div class='text-center'> Loading..." +
+            '<div class="spinner-border ml-1 search-loader" role="status">' +
+            '<span class="sr-only">Loading...</span>' +
+            '</div> </div>';
+
+        var submitData = {
+            query: queryText,
+            page: current_page
+        };
+
+        $.ajax({
+            type: "POST",
+            url: "/Home/SearchResults",
+            data: JSON.stringify(submitData),
+            contentType: 'application/json; charset=utf-8',
+            success: function (result) {
+
+                var data = JSON.parse(result);
+
+                console.log(data)
+
+                //Clear previous input
+                news_container.innerHTML = "";
+
+
+                //if no results found
+                if (data.articles.length == 0) {
+                    news_container.innerHTML = "<span class='text-danger'>No News found for '" + queryText + "'</span>";
+                }
+                else {
+                    news_container.innerHTML = '<div class="text-success mt-3 mb-3">Latest ' + data.articles.length + ' Results </div>';
+                }
+
+                for (var i = 0; i < data.articles.length; i++) {
+
+                    var date = new Date(data.articles[i].publishedAt);
+
+                    news_container.innerHTML = news_container.innerHTML +
+
+                        '<div class="news mt-3 mb-3">' +
+                        '<div onclick="goToSite(' + "'" + data.articles[i].url + "'" + ')" target="_blank" class="news-url">' +
+                        '<div class="row">' +
+                        '<div class="col-3">' +
+                        '<img src="' + data.articles[i].urlToImage + '">' +
+                        '</div>' +
+
+                        '<div class="col-9">' +
+                        '<div class="news-title">' +
+                        '<h2>' + data.articles[i].title + '</h2>' +
+                        '</div>' +
+
+                        '<div class="news-description">' +
+                        data.articles[i].description +
+                        '</div>' +
+
+                        '<div class="news-date mt-3">' +
+                        'Published At: ' + date +
+                        '</div>' +
+
+                        '</div>' +
+
+                        '</div>' +
+                        '</div>' +
+
+                        '</div>';
+
+                }
+
+               
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                console.log("Request: " + JSON.stringify(XMLHttpRequest) + "\n\nStatus: " + textStatus + "\n\nError: " + errorThrown);
+            }
+        });
+    }
+
+
+    function goToSite(link) {
+        window.open(link);
+    }
+
+    loadArticles();
+</script>
